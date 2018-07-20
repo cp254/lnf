@@ -262,6 +262,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="24dp"
+                                android:id="@+id/tv_cbsms"
                                 android:text="Via SMS (free)"
                                 android:textColor="#000" />
 

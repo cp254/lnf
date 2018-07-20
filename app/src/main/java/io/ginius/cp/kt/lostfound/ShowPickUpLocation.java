@@ -146,7 +146,7 @@ public class ShowPickUpLocation extends MainBaseActivity
         // Zoom in, animating the camera.
         mMap.animateCamera(CameraUpdateFactory.zoomIn());
         // Zoom out to zoom level 10, animating with a duration of 2 seconds.
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(18), 2000, null);
 
 
     }
@@ -166,8 +166,8 @@ public class ShowPickUpLocation extends MainBaseActivity
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         mMap = googleMap;
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-        googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
-        //moveToCurrentLocation(sydney);
+        //googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+        moveToCurrentLocation(sydney);
 
     }
 

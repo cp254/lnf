@@ -101,6 +101,8 @@
             android:hint="Share the gps location to make it easier \nto locate the document. \n(This requires GPS and internet connection)"
             android:fontFamily="@font/montserrat_bold"
             android:inputType="number"
+            android:textAlignment="center"
+            android:maxLines="6"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="8dp"
