@@ -38,19 +38,19 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.content_main)
-
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-
-            override fun onQueryTextChange(newText: String): Boolean {
-                return false
-            }
-            override fun onQueryTextSubmit(query: String): Boolean {
-                //Task HERE
-                submitData()
-                return false
-            }
-
-        })
+//
+//        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+//
+//            override fun onQueryTextChange(newText: String): Boolean {
+//                return false
+//            }
+//            override fun onQueryTextSubmit(query: String): Boolean {
+//                //Task HERE
+//                submitData()
+//                return false
+//            }
+//
+//        })
 
 
 

@@ -91,17 +91,27 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="40dp">
 
-            <SearchView
+            <EditText
                 android:id="@+id/searchView"
+                android:maxLines="1"
+                android:imeOptions="actionDone"
                 android:layout_width="match_parent"
                 android:layout_alignParentLeft="true"
                 android:layout_toLeftOf="@id/btn_search"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp"
+                android:paddingLeft="8dp"
+                android:singleLine="true"
+                android:paddingRight="16dp"
+                android:hint="Id, Passport, license"
+                android:drawableLeft="@drawable/ic_export_search"
+                android:drawablePadding="8dp"
                 android:layout_centerVertical="true"
                 android:background="@drawable/rounded_corners_white_background"
                 android:clickable="true"
                 android:fontFamily="@font/montserrat_bold"
-                android:queryHint="" />
+                 />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -182,6 +192,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/montserrat_extrabold"
                             android:text="No results found for"
+                            android:id="@+id/t1"
                             android:textSize="24sp" />
 
                         <TextView
@@ -200,7 +211,8 @@
                             android:fontFamily="@font/montserrat_semibold"
                             android:text="Incase the document you are looking for is found we can let you know."
                             android:textColor="@color/text_color_normal_darker"
-                            android:textSize="18sp" />
+                            android:textSize="18sp"
+                            android:id="@+id/t2"/>
 
                         <TextView
                             android:layout_width="wrap_content"

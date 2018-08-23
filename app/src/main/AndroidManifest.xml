@@ -17,19 +17,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.SkyBlue">
-        <activity android:name=".WelcomeActivity"
+        <activity android:name=".MainActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.WelcomeSlider">
+            android:theme="@style/AppTheme.SkyBlue">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.SkyBlue">
-        </activity>
+        <!--<activity android:name=".MainActivity"-->
+            <!--android:screenOrientation="portrait"-->
+            <!--android:theme="@style/AppTheme.SkyBlue">-->
+        <!--</activity>-->
         <activity android:name=".CreateDocsOne"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.SkyBlue">

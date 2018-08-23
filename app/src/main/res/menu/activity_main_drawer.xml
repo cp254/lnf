@@ -6,8 +6,12 @@
             <!--android:id="@+id/nav_profile"-->
             <!--android:title="My Profile" />-->
         <item
+            android:id="@+id/nav_found_id"
+            android:title="Found a document?" />
+
+        <item
             android:id="@+id/nav_search_history"
-            android:title="Search History" />
+            android:title="Search    " />
         <item
             android:id="@+id/nav_logout"
             android:title="Logout" />

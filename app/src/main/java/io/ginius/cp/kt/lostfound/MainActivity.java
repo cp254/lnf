@@ -25,6 +25,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -94,9 +95,9 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
     ArrayList<HashMap<String, String>> searchHistori;
     ListView rv;
     TextView desc, tv, tvcbsms;
-    SearchView sv;
+    EditText sv;
     Toolbar toolbar;
-    TextView headerText, headerNames, search;
+    TextView headerText, headerNames, search, t1, t2;
     Result docObjList[];
     private Context mContext;
     private Activity mActivity;
@@ -141,12 +142,13 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
         nsv = findViewById(R.id.nsv);
         mContext = getApplicationContext();
         tv = findViewById(R.id.tv_id);
+        t1 = findViewById(R.id.t1);
+        t2 = findViewById(R.id.t2);
         tvcbsms = findViewById(R.id.tv_cbsms);
         no_result = findViewById(R.id.not_found);
         mActivity = MainActivity.this;
         cont.setVisibility(View.GONE);
         notificationType = new ArrayList<String>();
-        sv.setIconified(false);
         prefManager = new io.ginius.cp.kt.lostfound.PreferenceManager(this);
 
         drawer = findViewById(R.id.drawer_layout);
@@ -174,11 +176,16 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
         ib.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (drawer.isDrawerOpen(GravityCompat.START)) {
-                    drawer.closeDrawer(GravityCompat.START);
+                if(prefManager.loadBoolean(IS_LOGGED_IN, false) && prefManager.loadPrefs(USER_ID, "")!= ""){
+                    if (drawer.isDrawerOpen(GravityCompat.START)) {
+                        drawer.closeDrawer(GravityCompat.START);
+                    } else {
+                        drawer.openDrawer(GravityCompat.START);
+                    }
                 } else {
-                    drawer.openDrawer(GravityCompat.START);
+                    drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
                 }
+
             }
         });
 
@@ -208,40 +215,48 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
         }
 
 
-        sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                header.setVisibility(View.GONE);
-                idQuery = query;
-                prefManager.savePrefs(DOC_ID, idQuery);
-                imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(sv.getApplicationWindowToken(), 0);
-                if(prefManager.loadBoolean(IS_LOGGED_IN, false) && prefManager.loadPrefs(USER_ID, "")!= ""){
-                    searchCheck = true;
-                try {
-                    webServiceRequest(POST, getString(R.string.service_url), searchId(query), "search_document");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                }else{
-                    loginDialog();
-                }
-                return false;
-            }
 
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                searchItem = newText;
 
-                return false;
-
-            }
-        });
+//        sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                header.setVisibility(View.GONE);
+//                idQuery = query;
+//                hideKeyboard(MainActivity.this);
+//                prefManager.savePrefs(DOC_ID, idQuery);
+//                imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//                imm.hideSoftInputFromWindow(sv.getApplicationWindowToken(), 0);
+//                if(prefManager.loadBoolean(IS_LOGGED_IN, false) && prefManager.loadPrefs(USER_ID, "")!= ""){
+//                    searchCheck = true;
+//                try {
+//                    webServiceRequest(POST, getString(R.string.service_url), searchId(query), "search_document");
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//                }else{
+//                    loginDialog();
+//                }
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String newText) {
+//                searchItem = newText;
+//                button.setVisibility(View.GONE);
+//                return false;
+//
+//            }
+//        });
 
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    idQuery = searchItem;
+                    idQuery = sv.getText().toString().trim();
+                searchItem = sv.getText().toString().trim();
+                prefManager.savePrefs(DOC_ID, idQuery);
+                header.setVisibility(View.GONE);
+                button.setVisibility(View.GONE);
+                hideKeyboard(MainActivity.this);
                 imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(sv.getApplicationWindowToken(), 0);
                 if(prefManager.loadBoolean(IS_LOGGED_IN, false) && prefManager.loadPrefs(USER_ID, "")!= ""){
@@ -509,6 +524,47 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                dialog.dismiss();
+
+
+            }
+        });
+
+        dialog.show();
+    }
+
+    void subscribeDialog(){
+        final Dialog dialog = new Dialog(MainActivity.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_confirm);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.setCanceledOnTouchOutside(false);
+        RelativeLayout bg = dialog.findViewById(R.id.image);
+        TextView login = dialog.findViewById(R.id.tvlogin);
+        Button yes = dialog.findViewById(R.id.btn_yes);
+        Button no = dialog.findViewById(R.id.btn_close);
+
+        yes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//
+                dialog.dismiss();
+                nsv.setVisibility(View.VISIBLE);
+                tv.setVisibility(View.GONE);
+                t1.setVisibility(View.GONE);
+                t2.setVisibility(View.GONE);
+
+                cont.setVisibility(View.VISIBLE);
+                desc.setVisibility(View.GONE);
+                rv.setVisibility(View.GONE);
+                button.setVisibility(View.GONE);
+
+            }
+        });
+
+        no.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 dialog.dismiss();
 
 
@@ -870,14 +926,29 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
             }
         }
 
+    public static void hideKeyboard(Activity activity) {
+        View view = activity.findViewById(android.R.id.content);
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
     public void docSearchResponse(JSONObject jsonObject) {
         pd.dismiss();
-        getWindow().setSoftInputMode(
-                WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        hideKeyboard(this);
+        hideKeyboard(MainActivity.this);
+        InputMethodManager imm2 = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm2.hideSoftInputFromWindow(sv.getApplicationWindowToken(), 0);
+        imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(sv.getApplicationWindowToken(), 0);
         try {
             Log.e(TAG, jsonObject.toString());
             transfersList = new ArrayList<HashMap<String, String>>();
             if (jsonObject.getInt(getString(R.string.statuscode)) == SUCCESS) {
+                getWindow().setSoftInputMode(
+                        WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
+                );
                 JSONObject documentList = jsonObject.getJSONObject(getString(R.string.result));
                 JSONObject doc = documentList.getJSONObject("doc");
                 JSONObject location = doc.getJSONObject("location");
@@ -924,11 +995,17 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
 
                 if (documentList.length() == 0) {
                     notFound = true;
+                    hideKeyboard(this);
+                    imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(sv.getApplicationWindowToken(), 0);
                     Window window = MainActivity.this.getWindow();
                     if (Build.VERSION.SDK_INT >= 21)
                         window.setStatusBarColor(ContextCompat.getColor(MainActivity.this, R.color.yellow));
                     toolbar.setBackgroundResource(R.color.yellow);
                     nsv.setVisibility(View.VISIBLE);
+                    tv.setVisibility(View.VISIBLE);
+                    t1.setVisibility(View.VISIBLE);
+                    t2.setVisibility(View.VISIBLE);
                     header.setVisibility(View.INVISIBLE);
                     desc.setVisibility(View.INVISIBLE);
                     button.setVisibility(View.GONE);
@@ -945,11 +1022,17 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
                     toolbar.setBackgroundResource(R.color.skyblue);
                     desc.setVisibility(View.VISIBLE);
                     nsv.setVisibility(View.GONE);
-                    desc.setText("Showing 1 result for " + "\"" + idQuery + "\"");
+                    desc.setText("Your Document Has Been Found. Click to see more");
                     rv.setVisibility(View.VISIBLE);
-                    button.setVisibility(View.VISIBLE);
+                    button.setVisibility(View.GONE);
+                    hideKeyboard(this);
+                    imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(sv.getApplicationWindowToken(), 0);
                 }
             } else {
+                getWindow().setSoftInputMode(
+                        WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
+                );
 //                String respMsg = jsonObject.getString(getString(R.string.statusname));
 //                Utils.dialogConfig(this, respMsg);
 //                notFound = true;
@@ -1422,14 +1505,13 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
-
+                subscribeDialog();
             }
         });
         docIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
-
 
             }
         });
@@ -1438,7 +1520,7 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
 
     }
 
-    void payToViewDialog(){
+    void payToViewDialog() {
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_pay_to_view);
@@ -1448,6 +1530,7 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
         Button code = dialog.findViewById(R.id.btn_enter_code);
         Button cncl = dialog.findViewById(R.id.btn_cancel);
         pay.setText("Pay KSH."+prefManager.loadPrefs(COSTNOT, ""));
+        cncl.setVisibility(View.GONE);
         pay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1473,7 +1556,6 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
-
 
             }
         });
@@ -1616,16 +1698,37 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
 
     @Override
     public void onBackPressed() {
-        if(notFound){
+
+        if(drawer.isDrawerOpen(Gravity.START) )
+            drawer.closeDrawer(GravityCompat.START);
+        else if(notFound){
             Window window = MainActivity.this.getWindow();
             if (Build.VERSION.SDK_INT >= 21)
                 window.setStatusBarColor(ContextCompat.getColor(MainActivity.this, R.color.skyblue));
             toolbar.setBackgroundResource(R.color.skyblue);
             desc.setVisibility(View.VISIBLE);
             desc.setVisibility(View.VISIBLE);
+            sv.setText("");
+            desc.setText(getString(R.string.search_lost_and_found));
+            header.setVisibility(View.VISIBLE);
             button.setVisibility(View.VISIBLE);
             nsv.setVisibility(View.GONE);
-        }else {
+        }else if (nsv.getVisibility() == View.VISIBLE) {
+            nsv.setVisibility(View.GONE);
+            header.setVisibility(View.VISIBLE);
+            desc.setVisibility(View.VISIBLE);
+            sv.setText("");
+            desc.setText(getString(R.string.search_lost_and_found));
+            button.setVisibility(View.VISIBLE);
+        }else if (rv.getVisibility() == View.VISIBLE) {
+            nsv.setVisibility(View.GONE);
+            rv.setVisibility(View.GONE);
+            desc.setVisibility(View.VISIBLE);
+            sv.setText("");
+            header.setVisibility(View.VISIBLE);
+            desc.setText(getString(R.string.search_lost_and_found));
+            button.setVisibility(View.VISIBLE);
+        } else {
             cont.setVisibility(View.VISIBLE);
             notFound = false;
             super.onBackPressed();
@@ -1672,7 +1775,16 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
         int id = item.getItemId();
 
         switch (id){
-
+            case R.id.nav_found_id:
+                //searchHistoryDialog();
+                foundID = true;
+                if(prefManager.loadBoolean(IS_LOGGED_IN, false)) {
+                    Intent intent = new Intent(mActivity, CreateDocsOne.class);
+                    startActivity(intent);
+                } else {
+                    regDialog();
+                }
+                break;
             case R.id.nav_search_history:
               //searchHistoryDialog();
                 try {
@@ -1687,6 +1799,7 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
                 settings.edit().clear().apply();
                 headerNames.setText("");
                 headerText.setText("");
+                button.setVisibility(View.VISIBLE);
                 break;
         }
 
