@@ -674,6 +674,8 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
         JSONObject dataW = new JSONObject();
         JSONObject dataItem = new JSONObject();
         dataItem.put("pickupcode", Integer.valueOf(pickupcode));
+        //dataItem.put("doc_num",Integer.valueOf(prefManager.loadPrefs(DOC_REF, "")));
+        dataItem.put("doc_ref", prefManager.loadPrefs(DOC_REF, ""));
         dataItem.put("userid", Integer.valueOf(prefManager.loadPrefs(USER_ID, "")));
         dataW.put(getString(R.string.data), dataItem);
         dataW.put(getString(R.string.command), "view_doc_pickup_code");
@@ -956,7 +958,7 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
                 String lat = String.valueOf(coordinates.getDouble(0));
                 String lon = String.valueOf(coordinates.getDouble(1));
                 Log.e("lat", lat);
-                Log.e("lon", lon);
+                Log.e("docList", documentList.toString(4));
                 String uniqueDocId = doc.getString("doc_unique_id");
                 String doc_type = doc.getString("doc_type");
                 String doc_name = doc.getString("doc_name");
@@ -986,6 +988,7 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
                 prefManager.savePrefs(DOC_REF, doc_num);
                 prefManager.savePrefs(DOC_DETAILS, doc_details);
                 transfersList.add(temp);
+
 
                 DocSearchAdapter adapter = new DocSearchAdapter(this, transfersList);
                 adapter.setCustomButtonListner(this);
