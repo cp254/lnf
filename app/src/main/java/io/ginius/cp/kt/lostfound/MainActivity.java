@@ -921,7 +921,7 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
 
             }else
             {
-                Utils.dialogErrorConfig(this, "Invalid code. Try again.");
+                Utils.dialogErrorConfig(this, "Invalid pick up code. Enter the correct pick up code.");
             }
             }catch(Exception e){
             Log.e(TAG, e.getMessage());
