@@ -121,7 +121,6 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
     private View HeaderView;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -176,7 +175,7 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
         ib.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(prefManager.loadBoolean(IS_LOGGED_IN, false) && prefManager.loadPrefs(USER_ID, "")!= ""){
+                if (prefManager.loadBoolean(IS_LOGGED_IN, false) && prefManager.loadPrefs(USER_ID, "") != "") {
                     if (drawer.isDrawerOpen(GravityCompat.START)) {
                         drawer.closeDrawer(GravityCompat.START);
                     } else {
@@ -197,10 +196,9 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
         });
 
 
-
-        if(prefManager.loadPrefs(USER_NAME, "")!= ""){
+        if (prefManager.loadPrefs(USER_NAME, "") != "") {
             String full = prefManager.loadPrefs(USER_NAME, "");
-            String edited= full.substring(0,1);
+            String edited = full.substring(0, 1);
             headerText.setText(edited);
             headerNames.setText(full);
             Log.e("ce", edited);
@@ -208,13 +206,11 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
         }
 
 
-        try {
-            webServiceRequest(POST, getString(R.string.service_url), getCostsReq(), "charges");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-
+//        try {
+//            webServiceRequest(POST, getString(R.string.service_url), getCostsReq(), "charges");
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
 
 
 //        sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -251,7 +247,7 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    idQuery = sv.getText().toString().trim();
+                idQuery = sv.getText().toString().trim();
                 searchItem = sv.getText().toString().trim();
                 prefManager.savePrefs(DOC_ID, idQuery);
                 header.setVisibility(View.GONE);
@@ -259,22 +255,22 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
                 hideKeyboard(MainActivity.this);
                 imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(sv.getApplicationWindowToken(), 0);
-                if(prefManager.loadBoolean(IS_LOGGED_IN, false) && prefManager.loadPrefs(USER_ID, "")!= ""){
+                if (prefManager.loadBoolean(IS_LOGGED_IN, false) && prefManager.loadPrefs(USER_ID, "") != "") {
                     searchCheck = true;
-                    if(!(TextUtils.isEmpty(searchItem))){
+                    if (!(TextUtils.isEmpty(searchItem))) {
+                        checkSubscriptionCharges();
                         try {
                             webServiceRequest(POST, getString(R.string.service_url), searchId(searchItem), "search_document");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                    }else
+                    } else
                         Utils.dialogErrorConfig(mActivity, "Blank search query. Enter a number to search");
-                }else{
+                } else {
                     loginDialog();
                 }
             }
         });
-
 
 
         cbSms.setOnClickListener(new View.OnClickListener() {
@@ -322,9 +318,9 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
         cont.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(prefManager.loadBoolean(IS_LOGGED_IN, false)){
+                if (prefManager.loadBoolean(IS_LOGGED_IN, false)) {
                     subCont();
-                }else {
+                } else {
                     subscribe = true;
                     regDialog();
                 }
@@ -337,9 +333,9 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
             @Override
             public void onClick(View v) {
                 foundID = true;
-                if(prefManager.loadBoolean(IS_LOGGED_IN, false)) {
-                Intent intent = new Intent(mActivity, CreateDocsOne.class);
-                            startActivity(intent);
+                if (prefManager.loadBoolean(IS_LOGGED_IN, false)) {
+                    Intent intent = new Intent(mActivity, CreateDocsOne.class);
+                    startActivity(intent);
                 } else {
                     regDialog();
                 }
@@ -351,7 +347,8 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
         //
 
     }
-    void regDialog(){
+
+    void regDialog() {
         final Dialog dialog = new Dialog(MainActivity.this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.register);
@@ -373,13 +370,13 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
                 if (TextUtils.isEmpty(ETemail.getText().toString()))
                     ETemail.setError("Please enter an email address");
 
-                else{
+                else {
                     email = ETemail.getText().toString().trim();
                     prefManager.savePrefs(USER_EMAIL, email);
                 }
                 if (TextUtils.isEmpty(ETphone.getText().toString()))
                     ETphone.setError("Please enter an email address");
-                else{
+                else {
                     contact = ETphone.getText().toString().trim();
                     prefManager.savePrefs(USER_PHONE_NUMBER, contact);
                 }
@@ -395,7 +392,7 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
                 }
 
                 try {
-                    reg  = true;
+                    reg = true;
                     webServiceRequest(POST, getString(R.string.service_url), register(), "register");
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -486,16 +483,17 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
         dialog.show();
     }
 
-    void restDialog() {final Dialog dialog = new Dialog(MainActivity.this);
-                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                        dialog.setContentView(R.layout.otp);
-                        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                        dialog.setCanceledOnTouchOutside(false);
-                       final EditText ETphone =  dialog.findViewById(R.id.et_contact);
-                        //EditText email =  dialog.findViewById(R.id.et_email);
-                       final EditText ETpassword =  dialog.findViewById(R.id.et_password);
-                        //TextView login =  dialog.findViewById(R.id.tvlogin);
-                        Button submit =  dialog.findViewById(R.id.btn_submit);
+    void restDialog() {
+        final Dialog dialog = new Dialog(MainActivity.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.otp);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.setCanceledOnTouchOutside(false);
+        final EditText ETphone = dialog.findViewById(R.id.et_contact);
+        //EditText email =  dialog.findViewById(R.id.et_email);
+        final EditText ETpassword = dialog.findViewById(R.id.et_password);
+        //TextView login =  dialog.findViewById(R.id.tvlogin);
+        Button submit = dialog.findViewById(R.id.btn_submit);
         Button cancel = dialog.findViewById(R.id.btn_cancel);
 
         cancel.setOnClickListener(new View.OnClickListener() {
@@ -533,7 +531,7 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
         dialog.show();
     }
 
-    void subscribeDialog(){
+    void subscribeDialog() {
         final Dialog dialog = new Dialog(MainActivity.this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_confirm);
@@ -583,7 +581,7 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
         final EditText ETotp = dialog.findViewById(R.id.et_otp);
         //EditText email =  dialog.findViewById(R.id.et_email);
         final EditText ETpassword = dialog.findViewById(R.id.et_password);
-        TextView resend =  dialog.findViewById(R.id.tvresend);
+        TextView resend = dialog.findViewById(R.id.tvresend);
         Button submit = dialog.findViewById(R.id.btn_submit);
         Button cancel = dialog.findViewById(R.id.btn_cancel);
 
@@ -632,12 +630,10 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
                 dialog.dismiss();
 
 
-
             }
         });
 
-                        dialog.show();
-
+        dialog.show();
 
 
     }
@@ -670,6 +666,7 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
         dataW.put(getString(R.string.command), "view_document_by_unique_ref");
         return dataW;
     }
+
     public JSONObject pickUpCode(String pickupcode) throws JSONException {
         JSONObject dataW = new JSONObject();
         JSONObject dataItem = new JSONObject();
@@ -740,6 +737,7 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
         Log.e("test", dataW.toString(4));
         return dataW;
     }
+
     public JSONObject resetOtpReq() throws JSONException {
         JSONObject dataW = new JSONObject();
         JSONObject dataItem = new JSONObject();
@@ -756,12 +754,12 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
         String str = "";
         String formatted = "";
         Log.e(TAG + "aaaaaaaaa", num);
-        str = "254"+num.substring(1);
+        str = "254" + num.substring(1);
         Log.e(TAG + "aaaaaaaaa", str);
-        if(str.length() < 12 || str.length() > 12)
+        if (str.length() < 12 || str.length() > 12)
             Utils.dialogConfig(this, "Invalid number. Kindly make sure the number prefix is \" 254 \" and the number is 12 digits long. ");
         else
-          formatted = str;
+            formatted = str;
         return formatted;
     }
 
@@ -769,11 +767,12 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
         JSONObject dataW = new JSONObject();
         JSONObject dataItem = new JSONObject();
         String formatted = null;
-        dataItem.put("contact",  modifyNumber(prefManager.loadPrefs(USER_PHONE_NUMBER, "")));
+        dataItem.put("contact", modifyNumber(prefManager.loadPrefs(USER_PHONE_NUMBER, "")));
         dataItem.put("doc_ref", prefManager.loadPrefs(DOC_REF, ""));
         dataW.put(getString(R.string.data), dataItem);
         dataW.put(getString(R.string.command), "make_mpesa_payment");
         Log.e("test", dataW.toString(4));
+        Log.e("count", "make_mpesa_payment");
         return dataW;
     }
 
@@ -812,6 +811,8 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
                                 pickUpCodeResponse(response);
                             else if (reqIdentifier.equalsIgnoreCase("charges"))
                                 chargesResponse(response);
+                            else if (reqIdentifier.equalsIgnoreCase("subscribe_charges"))
+                                chargesSubscriptionResponse(response);
                             else if (reqIdentifier.equalsIgnoreCase("history"))
                                 searchHistoryResponse(response);
 
@@ -845,11 +846,10 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
                 JSONArray search_history = jsonObject.getJSONArray(getString(R.string.result));
                 prefManager.savePrefs(SEARCH_HISTORY, search_history.toString());
                 searchHistoryDialog();
-            }else
-            {
+            } else {
                 Utils.dialogErrorConfig(this, "Invalid code. Try again.");
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
     }
@@ -867,15 +867,39 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
                 String subscription_amount = result.getString("subscription_amount");
                 prefManager.savePrefs(COSTNOT, payment_amount);
                 prefManager.savePrefs(COSTSUB, subscription_amount);
-                tvcbsms.setText("Via SMS at (KSh."+prefManager.loadPrefs(COSTSUB, "")+")");
+                tvcbsms.setText("Via SMS at (KSh." + prefManager.loadPrefs(COSTSUB, "") + ")");
+                payToViewDialog();
 
 
-
-            }else
-            {
+            } else {
                 Utils.dialogErrorConfig(this, "Invalid code. Try again.");
             }
-        }catch(Exception e){
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
+    public void chargesSubscriptionResponse(JSONObject jsonObject) {
+        pd.dismiss();
+        getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        try {
+            Log.e(TAG, jsonObject.toString());
+            transfersList = new ArrayList<HashMap<String, String>>();
+            if (jsonObject.getInt(getString(R.string.statuscode)) == SUCCESS) {
+                JSONObject result = jsonObject.getJSONObject(getString(R.string.result));
+                String payment_amount = result.getString("payment_amount");
+                String subscription_amount = result.getString("subscription_amount");
+                prefManager.savePrefs(COSTNOT, payment_amount);
+                prefManager.savePrefs(COSTSUB, subscription_amount);
+                tvcbsms.setText("Via SMS at (KSh." + prefManager.loadPrefs(COSTSUB, "") + ")");
+//                payToViewDialog();
+
+
+            } else {
+                Utils.dialogErrorConfig(this, "Invalid code. Try again.");
+            }
+        } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
     }
@@ -917,16 +941,13 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
                 startActivity(intent);
 
 
-
-
-            }else
-            {
+            } else {
                 Utils.dialogErrorConfig(this, "Invalid pick up code. Enter the correct pick up code.");
             }
-            }catch(Exception e){
+        } catch (Exception e) {
             Log.e(TAG, e.getMessage());
-            }
         }
+    }
 
     public static void hideKeyboard(Activity activity) {
         View view = activity.findViewById(android.R.id.content);
@@ -975,7 +996,7 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
                 HashMap<String, String> temp = new HashMap<String, String>();
                 temp.put("DocId", uniqueDocId);
                 temp.put("DocName", doc_name);
-                temp.put("doc_fname",doc_fname);
+                temp.put("doc_fname", doc_fname);
                 temp.put("doc_lname", doc_lname);
                 temp.put("DocType", doc_type);
                 temp.put("DocDetails", doc_details);
@@ -1072,7 +1093,7 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         try {
             Log.e("t", jsonObject.toString(4));
-            if(log) {
+            if (log) {
                 if (jsonObject.getInt(getString(R.string.statuscode)) == SUCCESS) {
                     regResponse();
                     JSONObject result = jsonObject.getJSONObject(getString(R.string.result));
@@ -1082,7 +1103,7 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
                     Log.e("t", user.getString("user_id"));
                     USERID = user.getString("user_id");
                     prefManager.savePrefs(USER_ID, USERID);
-                    if(user.has("reg_by")) {
+                    if (user.has("reg_by")) {
                         prefManager.savePrefs(USER_NAME, user.getString("reg_by"));
                         String full = user.getString("reg_by");
                         String edited = full.substring(0, 1);
@@ -1101,14 +1122,14 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
                         headerNames.setText(full);
                     }
 
-                        //prefManager.savePrefs(USER_NAME, user.getString("names") );
+                    //prefManager.savePrefs(USER_NAME, user.getString("names") );
 //                        headerText.setText(user.getString("names"));
-                        JSONArray search_history = result.getJSONArray("search_history");
-                        prefManager.savePrefs(SEARCH_HISTORY, search_history.toString());
-                        Log.e("!!!!!", search_history.toString());
+                    JSONArray search_history = result.getJSONArray("search_history");
+                    prefManager.savePrefs(SEARCH_HISTORY, search_history.toString());
+                    Log.e("!!!!!", search_history.toString());
                     //Toast.makeText(this, jsonObject.getString("statusname"), Toast.LENGTH_SHORT).show();
                     prefManager.savePrefs(USER_ID, USERID);
-                   // regResponse();
+                    // regResponse();
 
 
                 } else if (jsonObject.getInt(getString(R.string.statuscode)) == 1) {
@@ -1120,7 +1141,7 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
                     toolbar.setBackgroundResource(R.color.yellow);
 
                 }
-            } else if(reg){
+            } else if (reg) {
                 if (jsonObject.getInt(getString(R.string.statuscode)) == SUCCESS) {
                     int result = jsonObject.getInt(getString(R.string.result));
                     Log.e("uid", String.valueOf(result));
@@ -1145,7 +1166,7 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
 
     }
 
-    void regResponse(){
+    void regResponse() {
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.success_dialog);
@@ -1175,18 +1196,18 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
                 if (foundID) {
                     dialog.dismiss();
                     Intent intent = new Intent(mActivity, CreateDocsOne.class);
-                    if(name!=null){
+                    if (name != null) {
                         prefManager.savePrefs(USER_NAME, name);
                     }
                     startActivity(intent);
-                }else if(searchCheck){
+                } else if (searchCheck) {
                     dialog.dismiss();
                     searchCheck = false;
-                } else if(subscribe) {
+                } else if (subscribe) {
                     subscribe = false;
                     dialog.dismiss();
                     subCont();
-                } else{
+                } else {
                     dialog.dismiss();
                 }
             }
@@ -1248,7 +1269,7 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
         dialog.show();
     }
 
-    void error(){
+    void error() {
         notFound = true;
         Window window = MainActivity.this.getWindow();
         if (Build.VERSION.SDK_INT >= 21)
@@ -1256,7 +1277,7 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
         toolbar.setBackgroundResource(R.color.yellow);
     }
 
-    void success(){
+    void success() {
         notFound = false;
 
         Window window = MainActivity.this.getWindow();
@@ -1280,7 +1301,7 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
                 dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 dialog.setCanceledOnTouchOutside(false);
                 TextView text = dialog.findViewById(R.id.text);
-                text.setText("Request sent successfully. You will receive an sms once we process your subscription.");
+                text.setText("Request sent successfully. You will receive an sms notification once we process your subscription.");
                 Button submit = dialog.findViewById(R.id.btn_next);
 
                 submit.setOnClickListener(new View.OnClickListener() {
@@ -1341,7 +1362,7 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
         }
     }
 
-    public void chngePassResponse (JSONObject jsonObject) {
+    public void chngePassResponse(JSONObject jsonObject) {
         pd.dismiss();
         getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -1471,26 +1492,26 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
         textDocNames.setText("Names: " + firstName + "  " + secondName);
 
         Picasso.with(this)
-                .load("http://18.216.65.139:3000"+image)
+                .load(getString(R.string.image_url) + image)
                 .into(new Target() {
-            @Override
-            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                bg1.setBackground(new BitmapDrawable(bitmap));
-                bg.setBackground(new BitmapDrawable(bitmap));
-                pd.dismiss();
-            }
+                    @Override
+                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                        bg1.setBackground(new BitmapDrawable(bitmap));
+                        bg.setBackground(new BitmapDrawable(bitmap));
+                        pd.dismiss();
+                    }
 
-            @Override
-            public void onBitmapFailed(Drawable errorDrawable) {
-                pd.dismiss();
-            }
+                    @Override
+                    public void onBitmapFailed(Drawable errorDrawable) {
+                        pd.dismiss();
+                    }
 
-            @Override
-            public void onPrepareLoad(Drawable placeHolderDrawable) {
-                pd.show();
+                    @Override
+                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+                        pd.show();
 
-            }
-        });
+                    }
+                });
 
         Button cncl = dialog.findViewById(R.id.button_cancel);
         Button btn = dialog.findViewById(R.id.button_pay);
@@ -1498,8 +1519,8 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                checkCharges();
                 dialog.dismiss();
-                payToViewDialog();
 
 
             }
@@ -1523,6 +1544,22 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
 
     }
 
+    void checkSubscriptionCharges(){
+        try {
+            webServiceRequest(POST, getString(R.string.service_url), getCostsReq(), "subscribe_charges");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void checkCharges(){
+        try {
+            webServiceRequest(POST, getString(R.string.service_url), getCostsReq(), "charges");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     void payToViewDialog() {
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -1532,18 +1569,19 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
         Button pay = dialog.findViewById(R.id.btn_next);
         Button code = dialog.findViewById(R.id.btn_enter_code);
         Button cncl = dialog.findViewById(R.id.btn_cancel);
-        pay.setText("Pay KSH."+prefManager.loadPrefs(COSTNOT, ""));
+        pay.setText("Pay KSH." + prefManager.loadPrefs(COSTNOT, ""));
         cncl.setVisibility(View.GONE);
         pay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
+//                Log.e("Test111", "call 1");
                 try {
+                    Log.e("Test111", "call 1");
                     webServiceRequest(POST, getString(R.string.service_url), payment(), "payment");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
 
             }
         });
@@ -1566,7 +1604,7 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
         dialog.show();
     }
 
-    void searchHistoryDialog(){
+    void searchHistoryDialog() {
         searchHistori = new ArrayList<HashMap<String, String>>();
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -1574,26 +1612,28 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         Button pay = dialog.findViewById(R.id.btn_next);
-        if(prefManager.loadPrefs(SEARCH_HISTORY, "")!=null){
-        try {
-            searchHistory = new JSONArray( prefManager.loadPrefs(SEARCH_HISTORY, ""));
-            Log.e(TAG, prefManager.loadPrefs(SEARCH_HISTORY, ""));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        try{for(int i=0; i < searchHistory.length(); i++){
-            HashMap<String, String> temp = new HashMap<String, String>();
+        if (prefManager.loadPrefs(SEARCH_HISTORY, "") != null) {
             try {
-                temp.put("number", searchHistory.getJSONObject(i).getString("doc_ref"));
-                temp.put("date", searchHistory.getJSONObject(i).getString("viewdate"));
+                searchHistory = new JSONArray(prefManager.loadPrefs(SEARCH_HISTORY, ""));
+                Log.e(TAG, prefManager.loadPrefs(SEARCH_HISTORY, ""));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            searchHistori.add(temp);
+            try {
+                for (int i = 0; i < searchHistory.length(); i++) {
+                    HashMap<String, String> temp = new HashMap<String, String>();
+                    try {
+                        temp.put("number", searchHistory.getJSONObject(i).getString("doc_ref"));
+                        temp.put("date", searchHistory.getJSONObject(i).getString("viewdate"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    searchHistori.add(temp);
 
-        }}catch (Exception e){
+                }
+            } catch (Exception e) {
 
-        }
+            }
         }
         ListView lv = dialog.findViewById(R.id.lv);
         SearchHistory adapter = new SearchHistory(this, searchHistori);
@@ -1655,10 +1695,10 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
 
             final HashMap<String, String> map = list.get(position);
 
-            no.setText("ID: "+map.get("number"));
+            no.setText("ID: " + map.get("number"));
             String full = map.get("date");
             String edited = full.substring(0, 10);
-            date.setText("Date: "+edited );
+            date.setText("Date: " + edited);
 
 
             return convertView;
@@ -1667,7 +1707,7 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
 
     }
 
-    void enterCodeDialog(){
+    void enterCodeDialog() {
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_enter_code);
@@ -1680,7 +1720,7 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
-                if(TextUtils.isEmpty(etCode.getText().toString()))
+                if (TextUtils.isEmpty(etCode.getText().toString()))
                     etCode.setError("Please enter pickup code");
                 else {
 
@@ -1702,9 +1742,9 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
     @Override
     public void onBackPressed() {
 
-        if(drawer.isDrawerOpen(Gravity.START) )
+        if (drawer.isDrawerOpen(Gravity.START))
             drawer.closeDrawer(GravityCompat.START);
-        else if(notFound){
+        else if (notFound) {
             Window window = MainActivity.this.getWindow();
             if (Build.VERSION.SDK_INT >= 21)
                 window.setStatusBarColor(ContextCompat.getColor(MainActivity.this, R.color.skyblue));
@@ -1716,14 +1756,14 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
             header.setVisibility(View.VISIBLE);
             button.setVisibility(View.VISIBLE);
             nsv.setVisibility(View.GONE);
-        }else if (nsv.getVisibility() == View.VISIBLE) {
+        } else if (nsv.getVisibility() == View.VISIBLE) {
             nsv.setVisibility(View.GONE);
             header.setVisibility(View.VISIBLE);
             desc.setVisibility(View.VISIBLE);
             sv.setText("");
             desc.setText(getString(R.string.search_lost_and_found));
             button.setVisibility(View.VISIBLE);
-        }else if (rv.getVisibility() == View.VISIBLE) {
+        } else if (rv.getVisibility() == View.VISIBLE) {
             nsv.setVisibility(View.GONE);
             rv.setVisibility(View.GONE);
             desc.setVisibility(View.VISIBLE);
@@ -1745,16 +1785,16 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
         foundID = false;
         log = false;
         reg = false;
-        if(notFound){
+        if (notFound) {
             Window window = MainActivity.this.getWindow();
             if (Build.VERSION.SDK_INT >= 21)
                 window.setStatusBarColor(ContextCompat.getColor(MainActivity.this, R.color.yellow));
             toolbar.setBackgroundResource(R.color.yellow);
 
         }
-        if(prefManager.loadPrefs(USER_NAME, "")!= ""){
+        if (prefManager.loadPrefs(USER_NAME, "") != "") {
             String full = prefManager.loadPrefs(USER_NAME, "");
-            String edited= full.substring(0,1);
+            String edited = full.substring(0, 1);
             headerText.setText(edited);
             headerNames.setText(full);
             Log.e("re", edited);
@@ -1777,11 +1817,11 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
-        switch (id){
+        switch (id) {
             case R.id.nav_found_id:
                 //searchHistoryDialog();
                 foundID = true;
-                if(prefManager.loadBoolean(IS_LOGGED_IN, false)) {
+                if (prefManager.loadBoolean(IS_LOGGED_IN, false)) {
                     Intent intent = new Intent(mActivity, CreateDocsOne.class);
                     startActivity(intent);
                 } else {
@@ -1789,7 +1829,7 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
                 }
                 break;
             case R.id.nav_search_history:
-              //searchHistoryDialog();
+                //searchHistoryDialog();
                 try {
                     webServiceRequest(POST, getString(R.string.service_url), searcHistoryReq(), "history");
                 } catch (JSONException e) {
@@ -1797,7 +1837,24 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
                 }
                 break;
             case R.id.nav_logout:
-                Utils.dialogConfig(this, "Logged out");
+                final Dialog dialog = new Dialog(this);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.setContentView(R.layout.success_dialog);
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialog.setCanceledOnTouchOutside(false);
+                dialog.setCancelable(false);
+                TextView message = dialog.findViewById(R.id.text);
+                message.setText("Logged out");
+                dialog.findViewById(R.id.btn_next).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog.dismiss();
+                        onBackPressed();
+                    }
+                });
+                dialog.show();
+
+
                 SharedPreferences settings = this.getSharedPreferences("io.ginius.cp.kt.lostfound", Context.MODE_PRIVATE);
                 settings.edit().clear().apply();
                 headerNames.setText("");

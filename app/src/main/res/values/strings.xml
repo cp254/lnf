@@ -4,7 +4,6 @@
     <string name="or">Or</string>
     <string name="found_a_lost_id_or_passport">Found a lost Id or Passport? Help the owner find it.</string>
     <string name="enter_details">Enter the details below</string>
-    <string name="baseurl">http://18.216.65.139:3000/mobile/v1</string>
     <string name="email">email</string>
     <string name="phone">Phone</string>
     <string name="password">Pin</string>
@@ -16,7 +15,10 @@
     <string name="doc_ref">doc_ref</string>
     <string name="command">command</string>
     <string name="search_documents_by_unique_ref">search_documents_by_unique_ref</string>
-    <string name="service_url">http://18.216.65.139:3000/mobile/v1</string>
+    <string name="service_url">http://45.79.18.37:3000/mobile/v1</string>
+    <string name="image_url">http://45.79.18.37:3000</string>
+    <string name="baseurl">http://45.79.18.37:3000/mobile/v1</string>
+    <!--http://45.79.18.37-->
     <string name="ok">Okay</string>
     <string name="check_internet_connection">Check your internet connection and try again.</string>
     <string name="no_internet">No Internet</string>
