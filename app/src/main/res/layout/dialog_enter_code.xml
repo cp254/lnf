@@ -25,7 +25,8 @@
             android:padding="16dp"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="Enter the pick up code below:"/>
+            android:id="@+id/desc"
+            android:text="Enter the pick up code sent to you via SMS below:"/>
 
 
 

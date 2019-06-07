@@ -23,6 +23,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -360,6 +361,12 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
         final EditText ETemail = dialog.findViewById(R.id.et_email);
         final EditText ETpassword = dialog.findViewById(R.id.et_password);
         TextView login = dialog.findViewById(R.id.tvlogin);
+
+        String loginPrompt = "Already registered? LOGIN HERE.";
+        loginPrompt = loginPrompt.replace("LOGIN HERE.", "<font color='#00CBE9'>LOGIN HERE.</font>");
+        login.setText(Html.fromHtml(loginPrompt));
+
+
         Button submit = dialog.findViewById(R.id.btn_submit);
 
 
@@ -430,6 +437,14 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
         final EditText ETpassword = dialog.findViewById(R.id.et_password);
         //TextView login =  dialog.findViewById(R.id.tvlogin);
         Button submit = dialog.findViewById(R.id.btn_submit);
+
+        String regPrompt = "Not registered? Register HERE.";
+        regPrompt = regPrompt.replace("Register HERE.", "<font color='#00CBE9'>Register HERE.</font>");
+        reg.setText(Html.fromHtml(regPrompt));
+
+        String resetPrompt = "Forgot Password?. Click to Reset.";
+        resetPrompt = resetPrompt.replace("Click to Reset.", "<font color='#00CBE9'>Click to Reset.</font>");
+        reset.setText(Html.fromHtml(resetPrompt));
 
         reg.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -766,7 +781,6 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
     public JSONObject payment() throws JSONException {
         JSONObject dataW = new JSONObject();
         JSONObject dataItem = new JSONObject();
-        String formatted = null;
         dataItem.put("contact", modifyNumber(prefManager.loadPrefs(USER_PHONE_NUMBER, "")));
         dataItem.put("doc_ref", prefManager.loadPrefs(DOC_REF, ""));
         dataW.put(getString(R.string.data), dataItem);
@@ -846,6 +860,8 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
                 JSONArray search_history = jsonObject.getJSONArray(getString(R.string.result));
                 prefManager.savePrefs(SEARCH_HISTORY, search_history.toString());
                 searchHistoryDialog();
+                int i;
+                for (i = 0; i<search_history.length(); i++){}
             } else {
                 Utils.dialogErrorConfig(this, "Invalid code. Try again.");
             }
@@ -939,6 +955,7 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
                 prefManager.savePrefs(DATEFOUND, createddate);
                 Intent intent = new Intent(mActivity, ShowPickUpLocation.class);
                 startActivity(intent);
+
 
 
             } else {
@@ -1046,7 +1063,10 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
                     toolbar.setBackgroundResource(R.color.skyblue);
                     desc.setVisibility(View.VISIBLE);
                     nsv.setVisibility(View.GONE);
-                    desc.setText("Your Document Has Been Found. Click to see more");
+                    //“Your Document has been Found. Tap below to see more.”
+                    String foundDocPrompt = "Your Document Has Been Found. Tap below to see more.";
+                    foundDocPrompt = foundDocPrompt.replace("Tap below", "<font color='#000000'>Tap below</font>");
+                    desc.setText(Html.fromHtml(foundDocPrompt));
                     rv.setVisibility(View.VISIBLE);
                     button.setVisibility(View.GONE);
                     hideKeyboard(this);
@@ -1301,7 +1321,7 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
                 dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 dialog.setCanceledOnTouchOutside(false);
                 TextView text = dialog.findViewById(R.id.text);
-                text.setText("Request sent successfully. You will receive an sms notification once we process your subscription.");
+                text.setText("Request sent successfully. You will receive a notification when your document is found.");
                 Button submit = dialog.findViewById(R.id.btn_next);
 
                 submit.setOnClickListener(new View.OnClickListener() {
@@ -1417,9 +1437,27 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
 //                            "ResponseDescription": "Success. Request accepted for processing",
 //                            "CustomerMessage": "Success. Request accepted for processing"
                 JSONObject result = jsonObject.getJSONObject(getString(R.string.result));
-                String msg = result.getString("CustomerMessage");
-                Utils.dialogConfig(this, msg);
+                String msg = "“Request Sent Successfully. You will receive a notification once we process your payment.";
+                //“Request Sent Successfully. You will receive a notification once we process your payment.”
 
+                final Dialog dialog = new Dialog(this);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.setContentView(R.layout.success_dialog);
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialog.setCanceledOnTouchOutside(false);
+                TextView message = dialog.findViewById(R.id.text);
+                message.setText(msg);
+                dialog.findViewById(R.id.btn_next).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog.dismiss();
+                        enterCodeDialog();
+                    }
+                });
+                dialog.show();
+
+
+                //Utils.dialogConfig(this, msg);
 
                 success();
             } else {
@@ -1430,7 +1468,7 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
             }
         } catch (Exception ex) {
             Log.e(TAG + " error", ex.toString());
-            Toast.makeText(this, ex.toString(), Toast.LENGTH_LONG).show();
+//            Toast.makeText(this, ex.toString(), Toast.LENGTH_LONG).show();
             ex.printStackTrace();
 //            resetLayout();
         }
@@ -1574,14 +1612,12 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
         pay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dialog.dismiss();
-//                Log.e("Test111", "call 1");
                 try {
-                    Log.e("Test111", "call 1");
                     webServiceRequest(POST, getString(R.string.service_url), payment(), "payment");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                dialog.dismiss();
 
             }
         });
@@ -1704,6 +1740,39 @@ public class MainActivity extends MainBaseActivity implements DocSearchAdapter.c
             return convertView;
         }
 
+
+    }
+
+    void enterCodeAfterPayamentDialog(String msg) {
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_enter_code);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        TextView desc = dialog.findViewById(R.id.desc);
+        Button pay = dialog.findViewById(R.id.btn_next);
+        final EditText etCode = dialog.findViewById(R.id.et_code);
+        desc.setText(msg+". Enter the pick up code sent to you via sms below:");
+
+        pay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                if (TextUtils.isEmpty(etCode.getText().toString()))
+                    etCode.setError("Please enter pickup code");
+                else {
+
+                    try {
+                        webServiceRequest(POST, getString(R.string.service_url), pickUpCode(etCode.getText().toString().trim()), "pick_up_code");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+
+            }
+        });
+        dialog.show();
 
     }
 

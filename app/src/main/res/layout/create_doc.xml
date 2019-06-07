@@ -166,7 +166,7 @@
 
         <EditText
             android:id="@+id/et_doc_details"
-            android:hint="comments"
+            android:hint="Describe where you found it"
             android:fontFamily="@font/montserrat_bold"
             android:background="@drawable/rounded_corners_white_background"
             android:inputType="textCapSentences"

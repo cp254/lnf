@@ -15,10 +15,14 @@
     <string name="doc_ref">doc_ref</string>
     <string name="command">command</string>
     <string name="search_documents_by_unique_ref">search_documents_by_unique_ref</string>
-    <string name="service_url">http://45.79.18.37:3000/mobile/v1</string>
-    <string name="image_url">http://45.79.18.37:3000</string>
-    <string name="baseurl">http://45.79.18.37:3000/mobile/v1</string>
+    <!--<string name="service_url">http://45.79.18.37:3000/mobile/v1</string>-->
+    <!--<string name="image_url">http://45.79.18.37:3000</string>-->
+    <!--<string name="baseurl">http://45.79.18.37:3000/mobile/v1</string>-->
     <!--http://45.79.18.37-->
+    <string name="service_url">https://api.lostandfoundke.com/mobile/v1</string>
+    <string name="image_url">https://api.lostandfoundke.com</string>
+    <string name="baseurl">https://api.lostandfoundke.com/mobile/v1</string>
+
     <string name="ok">Okay</string>
     <string name="check_internet_connection">Check your internet connection and try again.</string>
     <string name="no_internet">No Internet</string>

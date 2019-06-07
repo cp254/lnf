@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.RetryPolicy;
 import com.android.volley.toolbox.Volley;
 
 import java.io.IOException;
@@ -50,6 +51,13 @@ public class SingletonRequestQueue  {
 
     public<T> void addToRequestQueue(Request<T> request){
         // Add the specified request to the request queue
+//        request.setTag(TextUtils.isEmpty(tag) ? TAG : tag);
+
+
+        request.setRetryPolicy(new DefaultRetryPolicy(90 * 10000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         getRequestQueue().add(request);
+
     }
+
+
 }
