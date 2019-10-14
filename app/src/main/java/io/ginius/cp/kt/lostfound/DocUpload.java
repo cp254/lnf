@@ -197,6 +197,7 @@ public class DocUpload extends MainBaseActivity{
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         try {
             Log.i(TAG, jsonObject.toString());
+            Log.e("upload response0", jsonObject.toString(4));
             if (jsonObject.getInt(getString(R.string.statuscode)) == SUCCESS) {
                     final Dialog dialog = new Dialog(this);
                     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -215,9 +216,11 @@ public class DocUpload extends MainBaseActivity{
                         }
                     });
                     dialog.show();
+                Log.e("upload response1", jsonObject.toString(4 ));
 
             } else {
                 String respMsg = jsonObject.getString(getString(R.string.statusname));
+                Log.e("upload response2", respMsg.toString());
                 Toast.makeText(this, respMsg, Toast.LENGTH_LONG).show();
 
             }
